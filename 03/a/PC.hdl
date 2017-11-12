@@ -1,0 +1,53 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/03/a/PC.hdl
+
+/**
+ * A 16-bit counter with load and reset control bits.
+ * if      (reset[t] == 1) out[t+1] = 0
+ * else if (load[t] == 1)  out[t+1] = in[t]
+ * else if (inc[t] == 1)   out[t+1] = out[t] + 1  (integer addition)
+ * else                    out[t+1] = out[t]
+ */
+
+/**
+ * Author : Jatin Rohilla
+ * Course : MCA 104
+ * 
+ * Dependencies : Inc16, Mux16, Register
+ */
+
+CHIP PC {
+    IN in[16],load,inc,reset;
+    OUT out[16];
+
+    PARTS:
+    
+    /* Implemented bottom up 
+     * First  condition can overwrite cond 2,3,4 
+     * Second condition can overwrite cond   3,4
+     * Third  condition can overwrite cond     4 
+     * Fourth condition is independent. Implement this first.
+     */
+
+    /* condition 4 : load previous output as it is */
+    Register(in=feedback, load=true, out=o4);
+    
+	/* Condition 3 : load incremented value */
+	/* Notice that feedback needs to be incremented in this clock cycle.
+	 * Storing feedback in a variable and using here won't work.
+	 * Convention : Just follow the pseudo code, do as it says
+	 */
+    Inc16(in=feedback, out=incout);
+    Mux16(a=o4, b=incout, sel=inc, out=o3);
+
+    /* Condition 2 : load current input */
+    Mux16(a=o3, b=in, sel=load, out=o2);
+
+	/* Condition 1 : Reset */
+    Mux16(a=o2, b=false, sel=reset, out=o1);
+
+    /* output the final result */
+    Register(in=o1, load=true, out=feedback, out=out);
+}
