@@ -1,0 +1,4 @@
+# Nand2tetris comparison and test scripts
+*.tst
+*.cmp
+*.out
