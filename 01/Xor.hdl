@@ -1,0 +1,43 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Xor.hdl
+
+/**
+ * Exclusive-or gate:
+ * out = not (a == b)
+ */
+
+/**
+ * Author : Jatin Rohilla
+ * Course : MCA 104
+ * 
+ * Dependencies : Nand
+ */
+
+
+CHIP Xor {
+    IN a, b;
+    OUT out;
+
+    PARTS:
+
+    /* Classic Implementation of a Xor gate using Nand gates */
+
+    /* we know, A xor B = A.Bbar + Abar.B 
+   	 * Plot it using Nand gates, then remove redundant gates,
+   	 * we obtain this implementation.
+     */
+
+    // nand a and b to obtain mid gate
+    Nand(a=a,b=b,out=mid);
+
+    // nand a and midgate
+    Nand(a=a,b=mid,out=cornerA);
+
+    // nand b and midgate
+    Nand(a=b,b=mid,out=cornerB);
+
+    // nand two corner gates
+    Nand(a=cornerA,b=cornerB,out=out);
+}
